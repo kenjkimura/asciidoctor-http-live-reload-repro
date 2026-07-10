@@ -1,0 +1,21 @@
+= asciidoctor:http Live Reload Reproduction
+:toc:
+:sectnums:
+
+This page is served by the `asciidoctor:http` goal.
+
+== Reproduction Target
+
+Change the marker below while `mvn asciidoctor:http` is running.
+
+Reload marker: initial version
+
+== Expected Behavior
+
+After this file is saved, the generated HTML changes and the browser reloads automatically.
+
+== What This Project Checks
+
+The live reload script polls the generated HTML with `HEAD` requests and compares response headers such as `ETag`, `Last-Modified`, `Content-Length`, and `Content-Type`.
+
+With the affected plugin implementation, the `HEAD` response is `205 Reset Content` and the effective `Content-Length` is `0`, so the browser-side script cannot observe a useful change when the HTML is regenerated.

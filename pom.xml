@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>asciidoctor-http-live-reload-repro</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <properties>
+        <asciidoctor.maven.plugin.groupId>org.asciidoctor</asciidoctor.maven.plugin.groupId>
+        <asciidoctor.maven.plugin.version>3.2.0</asciidoctor.maven.plugin.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>${asciidoctor.maven.plugin.groupId}</groupId>
+                <artifactId>asciidoctor-maven-plugin</artifactId>
+                <version>${asciidoctor.maven.plugin.version}</version>
+                <configuration>
+                    <sourceDirectory>${project.basedir}/src/docs/asciidoc</sourceDirectory>
+                    <sourceDocumentName>index.adoc</sourceDocumentName>
+                    <outputDirectory>${project.build.directory}/generated-docs</outputDirectory>
+                    <backend>html5</backend>
+                    <home>index</home>
+                    <port>2000</port>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
