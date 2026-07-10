@@ -1,0 +1,21 @@
+= asciidoctor:http Live Reload 再現ページ
+:toc:
+:sectnums:
+
+このページは `asciidoctor:http` goal によって配信されます。
+
+== 再現対象
+
+`./mvnw asciidoctor:http` を起動した状態で、下の marker を変更します。
+
+Reload marker: 初期バージョン
+
+== 期待する動作
+
+このファイルを保存すると、生成済み HTML が更新され、ブラウザが自動的にリロードされます。
+
+== このプロジェクトで確認すること
+
+live reload スクリプトは、生成された HTML に対して `HEAD` リクエストを送り、`ETag`、`Last-Modified`、`Content-Length`、`Content-Type` などのレスポンスヘッダーを比較します。
+
+問題のあるプラグイン実装では、`HEAD` 応答が `205 Reset Content` になり、実効的な `Content-Length` が `0` になります。そのため、HTML が再生成されても、ブラウザ側のスクリプトは有効な変更を検知できません。
