@@ -34,7 +34,6 @@ Changing the `HEAD` response from `205 Reset Content` to `200 OK` in `Asciidocto
 ## Prerequisites
 
 - JDK 17 or later
-- Maven 3.9 or later when installing the patched plugin from the fork
 - A browser
 
 ## Reproduce with the Released Plugin
