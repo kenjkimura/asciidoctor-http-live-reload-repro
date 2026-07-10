@@ -23,7 +23,10 @@ Changing the `HEAD` response from `205 Reset Content` to `200 OK` in `Asciidocto
 
 ```text
 .
+├── .mvn/wrapper/maven-wrapper.properties
 ├── README.md
+├── mvnw
+├── mvnw.cmd
 ├── pom.xml
 └── src/docs/asciidoc/index.adoc
 ```
@@ -31,7 +34,7 @@ Changing the `HEAD` response from `205 Reset Content` to `200 OK` in `Asciidocto
 ## Prerequisites
 
 - JDK 17 or later
-- Maven 3.9 or later
+- Maven 3.9 or later when installing the patched plugin from the fork
 - A browser
 
 ## Reproduce with the Released Plugin
@@ -39,7 +42,13 @@ Changing the `HEAD` response from `205 Reset Content` to `200 OK` in `Asciidocto
 Start the server with the released plugin by using an isolated local Maven repository:
 
 ```shell
-mvn "-Dmaven.repo.local=target/maven-central-repo" "-Dasciidoctor.maven.plugin.version=3.2.0" asciidoctor:http
+./mvnw "-Dmaven.repo.local=target/maven-central-repo" "-Dasciidoctor.maven.plugin.version=3.2.0" asciidoctor:http
+```
+
+Windows PowerShell:
+
+```shell
+.\mvnw.cmd "-Dmaven.repo.local=target/maven-central-repo" "-Dasciidoctor.maven.plugin.version=3.2.0" asciidoctor:http
 ```
 
 The isolated repository keeps the released-plugin check independent from any patched artifact installed in your normal local Maven repository. In PowerShell, keep the `-D...` arguments quoted as shown above.
@@ -54,6 +63,12 @@ In another terminal, inspect the `HEAD` response:
 
 ```shell
 curl -I http://localhost:2000/index
+```
+
+Windows PowerShell:
+
+```shell
+curl.exe -I http://localhost:2000/index
 ```
 
 Expected affected response characteristics:
@@ -89,7 +104,13 @@ mvn -pl asciidoctor-maven-plugin -am -DskipTests install
 Return to this reproduction project and start `asciidoctor:http`:
 
 ```shell
-mvn asciidoctor:http
+./mvnw asciidoctor:http
+```
+
+Windows PowerShell:
+
+```shell
+.\mvnw.cmd asciidoctor:http
 ```
 
 Maven resolves the patched artifact from your normal local repository.
@@ -98,6 +119,12 @@ Open the served page again and inspect the `HEAD` response:
 
 ```shell
 curl -I http://localhost:2000/index
+```
+
+Windows PowerShell:
+
+```shell
+curl.exe -I http://localhost:2000/index
 ```
 
 Expected patched response characteristics:
@@ -109,6 +136,10 @@ Expected patched response characteristics:
 Edit and save [src/docs/asciidoc/index.adoc](src/docs/asciidoc/index.adoc) again. The browser should reload automatically and show the changed marker without manual refresh.
 
 If you need to switch back to the released plugin after installing the fork, run the released-plugin check with the isolated repository command shown above, or remove the patched artifact from your normal local Maven repository.
+
+## Stop the Server
+
+Type `exit` or `quit` in the Maven process, or press `Ctrl+C`.
 
 ## Notes for Issue Report
 
