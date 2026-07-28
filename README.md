@@ -4,20 +4,13 @@ Reproduction project for an `asciidoctor-maven-plugin` `asciidoctor:http` live r
 
 ## Summary
 
-The `asciidoctor:http` goal injects a browser-side live reload script into generated HTML. The script checks whether the served HTML has changed by polling response headers from `HEAD` requests.
+The asciidoctor:http goal should reload the browser automatically when an AsciiDoc source file is saved and the HTML is regenerated.
 
-In the affected implementation, `AsciidoctorHandler` returns `205 Reset Content` for `HEAD` requests. Netty treats this status as a response without content, so the effective response becomes similar to:
+This project demonstrates that version 3.2.0 regenerates the HTML file, but the browser does not reload automatically.
 
-```http
-HTTP/1.1 205 Reset Content
-expires: 0
-content-type: text/html
-content-length: 0
-```
+The browser-side live reload script detects changes by polling the served HTML with HEAD requests. However, AsciidoctorHandler returns 205 Reset Content with content-length: 0, preventing the script from detecting the regenerated HTML.
 
-When the HTML is regenerated, the headers observed by `live.js` do not change enough to detect the update, so the browser does not reload automatically.
-
-Changing the `HEAD` response from `205 Reset Content` to `200 OK` in `AsciidoctorHandler` makes live reload work as expected.
+Changing the HEAD response status to 200 OK allows the browser to detect the change and reload automatically.
 
 ## Project Layout
 
@@ -36,7 +29,7 @@ Changing the `HEAD` response from `205 Reset Content` to `200 OK` in `Asciidocto
 - JDK 17 or later
 - A browser
 
-## Reproduce with the Released Plugin
+## Reproduce the Browser Reload Failure
 
 Start the server with the released plugin by using an isolated local Maven repository:
 
@@ -58,7 +51,17 @@ Open the URL printed by Maven, usually:
 http://localhost:2000/index
 ```
 
-In another terminal, inspect the `HEAD` response:
+Then edit [src/docs/asciidoc/index.adoc](src/docs/asciidoc/index.adoc), for example change this line:
+
+```adoc
+Reload marker: initial version
+```
+
+Save the file and wait for Maven to regenerate the HTML.
+
+Expected result with the released plugin: the generated HTML changes, but the browser does not reload automatically. If you reload the page manually, the updated content is shown.
+
+You can also inspect the `HEAD` response that causes the browser-side live reload check to miss the update:
 
 ```shell
 curl -I http://localhost:2000/index
@@ -77,15 +80,7 @@ Expected affected response characteristics:
 - `Last-Modified` is absent
 - `ETag` is absent
 
-Then edit [src/docs/asciidoc/index.adoc](src/docs/asciidoc/index.adoc), for example change this line:
-
-```adoc
-Reload marker: initial version
-```
-
-Save the file and wait for Maven to regenerate the HTML. The browser is expected to stay on the old content until it is manually reloaded.
-
-## Verify with a Patched Plugin
+## Verify the Browser Reload Fix
 
 Use the patched fork and branch:
 
@@ -114,7 +109,11 @@ Windows PowerShell:
 
 Maven resolves the patched artifact from your normal local repository.
 
-Open the served page again and inspect the `HEAD` response:
+Open the served page again. Edit and save [src/docs/asciidoc/index.adoc](src/docs/asciidoc/index.adoc) again.
+
+Expected result with the patched plugin: the browser reloads automatically and shows the changed marker without manual refresh.
+
+You can also inspect the `HEAD` response used by the live reload script:
 
 ```shell
 curl -I http://localhost:2000/index
@@ -130,9 +129,6 @@ Expected patched response characteristics:
 
 - Status is `200 OK`
 - `content-length` matches the generated HTML size
-- Other relevant metadata can be returned and compared by the live reload script
-
-Edit and save [src/docs/asciidoc/index.adoc](src/docs/asciidoc/index.adoc) again. The browser should reload automatically and show the changed marker without manual refresh.
 
 If you need to switch back to the released plugin after installing the fork, run the released-plugin check with the isolated repository command shown above, or remove the patched artifact from your normal local Maven repository.
 
