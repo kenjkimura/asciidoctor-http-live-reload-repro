@@ -47,14 +47,14 @@ With `asciidoctor-maven-plugin` 3.2.0, the `HEAD` response is `205 Reset Content
 
 With the fixed plugin, the `HEAD` response is `200 OK` and `content-length` is based on the generated HTML size, so the live reload script can detect the change.
 
+Patched plugin:
+
+- Fork: https://github.com/kenjkimura/asciidoctor-maven-plugin.git
+- Branch: `fix/live-reload-head-response`
+
 Steps:
 
-1. Use the patched fork and branch:
-
-	- Fork: https://github.com/kenjkimura/asciidoctor-maven-plugin.git
-	- Branch: `fix/live-reload-head-response`
-
-2. Install the patched plugin into your normal local Maven repository:
+1. Install the patched plugin into your normal local Maven repository:
 
 	```shell
 	git clone --branch fix/live-reload-head-response https://github.com/kenjkimura/asciidoctor-maven-plugin.git
@@ -62,7 +62,7 @@ Steps:
 	mvn -pl asciidoctor-maven-plugin -am -DskipTests install
 	```
 
-3. Return to this reproduction project and start `asciidoctor:http`:
+2. Return to this reproduction project and start `asciidoctor:http`:
 
 	```shell
 	./mvnw asciidoctor:http
@@ -70,10 +70,18 @@ Steps:
 
 	Maven resolves the patched artifact from your normal local Maven repository.
 
-4. Open the served page again, then edit and save [src/docs/asciidoc/index.adoc](src/docs/asciidoc/index.adoc).
+3. Open the served page again, then edit and save [src/docs/asciidoc/index.adoc](src/docs/asciidoc/index.adoc).
 
-5. Check the browser page.
+4. Check the browser page.
 
 Expected result:
 
 The browser page updates automatically to show the latest content.
+
+## Limitations
+
+The current patched plugin only changes the `HEAD` response status from `205 Reset Content` to `200 OK`. It is not a complete fix.
+
+The current live reload decision depends on `content-length`, which indicates the generated HTML file size. For example, if a change results in the same generated HTML size, the change may not be detected and the browser page may not update.
+
+A complete fix should provide the response metadata needed for live reload change detection without relying only on file size.
