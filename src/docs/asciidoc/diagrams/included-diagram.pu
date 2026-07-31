@@ -1,0 +1,9 @@
+@startuml
+title Included PlantUML marker: initial included pu version
+
+actor Browser
+participant "asciidoctor:http" as Server
+
+Browser -> Server: HEAD /index
+Server --> Browser: response metadata
+@enduml

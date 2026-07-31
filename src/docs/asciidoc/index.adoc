@@ -1,6 +1,7 @@
 = asciidoctor:http Live Reload Reproduction
 :toc:
 :sectnums:
+:data-uri:
 
 This page is served by the `asciidoctor:http` goal.
 
@@ -9,6 +10,17 @@ This page is served by the `asciidoctor:http` goal.
 Change the marker below while `mvn asciidoctor:http` is running.
 
 Reload marker: initial version
+
+== Included AsciiDoc Check
+
+include::partials/included-fragment.adoc[]
+
+== Included PlantUML Check
+
+[plantuml,diagrams/included-diagram,svg]
+----
+include::diagrams/included-diagram.pu[]
+----
 
 == Expected Behavior
 

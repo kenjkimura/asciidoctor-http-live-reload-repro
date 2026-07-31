@@ -12,6 +12,8 @@
     <properties>
         <asciidoctor.maven.plugin.groupId>org.asciidoctor</asciidoctor.maven.plugin.groupId>
         <asciidoctor.maven.plugin.version>3.2.0</asciidoctor.maven.plugin.version>
+        <asciidoctorj.diagram.version>3.2.1</asciidoctorj.diagram.version>
+        <asciidoctorj.diagram.plantuml.version>1.2026.2</asciidoctorj.diagram.plantuml.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -28,7 +30,23 @@
                     <backend>html5</backend>
                     <home>index</home>
                     <port>2000</port>
+                    <refreshOn>^(partials|diagrams|.*\.(adoc|pu))$</refreshOn>
+                    <requires>
+                        <require>asciidoctor-diagram</require>
+                    </requires>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctorj-diagram</artifactId>
+                        <version>${asciidoctorj.diagram.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctorj-diagram-plantuml</artifactId>
+                        <version>${asciidoctorj.diagram.plantuml.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
