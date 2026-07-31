@@ -29,7 +29,13 @@ Steps:
 	http://localhost:2000/index
 	```
 
-3. Edit [src/docs/asciidoc/index.adoc](src/docs/asciidoc/index.adoc), save the file, and wait for Maven to process the change.
+3. Edit one of the source files, save it, and wait for Maven to process the change.
+
+	Example files:
+
+	- [src/docs/asciidoc/index.adoc](src/docs/asciidoc/index.adoc)
+	- [src/docs/asciidoc/partials/included-fragment.adoc](src/docs/asciidoc/partials/included-fragment.adoc)
+	- [src/docs/asciidoc/diagrams/included-diagram.pu](src/docs/asciidoc/diagrams/included-diagram.pu)
 
 4. Check the browser page.
 
@@ -45,7 +51,9 @@ With `asciidoctor-maven-plugin` 3.2.0, the `HEAD` response is `205 Reset Content
 
 ## Verify the Browser Reload Fix
 
-With the fixed plugin, the `HEAD` response is `200 OK` and `content-length` is based on the generated HTML size, so the live reload script can detect the change.
+With the fixed plugin, the `HEAD` response is `200 OK` and returns `content-length` based on the generated HTML, along with `ETag` and `Last-Modified`.
+
+This allows the live reload script to detect changes.
 
 Patched plugin:
 
@@ -62,15 +70,13 @@ Steps:
 	mvn -pl asciidoctor-maven-plugin -am -DskipTests install
 	```
 
-2. Return to this reproduction project and start `asciidoctor:http`:
+2. Return to this reproduction project and start `asciidoctor:http` with the patched `3.2.1-SNAPSHOT` plugin:
 
 	```shell
-	./mvnw asciidoctor:http
+	./mvnw "-Dasciidoctor.maven.plugin.version=3.2.1-SNAPSHOT" asciidoctor:http
 	```
 
-	Maven resolves the patched artifact from your normal local Maven repository.
-
-3. Open the served page again, then edit and save [src/docs/asciidoc/index.adoc](src/docs/asciidoc/index.adoc).
+3. Open the served page again, then edit and save one of the source files listed above.
 
 4. Check the browser page.
 
@@ -80,8 +86,6 @@ The browser page updates automatically to show the latest content.
 
 ## Limitations
 
-The current patched plugin only changes the `HEAD` response status from `205 Reset Content` to `200 OK`. It is not a complete fix.
+When an SVG generated from a PlantUML `.pu` file is referenced as an external file, changes to the `.pu` file may not be reflected in the browser.
 
-The current live reload decision depends on `content-length`, which indicates the generated HTML file size. For example, if a change results in the same generated HTML size, the change may not be detected and the browser page may not update.
-
-A complete fix should provide the response metadata needed for live reload change detection without relying only on file size.
+To avoid this external SVG reference issue, this reproduction project embeds the generated SVG directly into the HTML.
