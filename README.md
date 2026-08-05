@@ -51,7 +51,7 @@ With `asciidoctor-maven-plugin` 3.2.0, the `HEAD` response is `205 Reset Content
 
 ## Verify the Browser Reload Fix
 
-With the fixed plugin, the `HEAD` response is `200 OK` and returns `content-length` based on the generated HTML, along with `ETag` and `Last-Modified`.
+With the fixed plugin, the `HEAD` response is `200 OK` and returns `Last-Modified` for the generated HTML.
 
 This allows the live reload script to detect changes.
 
